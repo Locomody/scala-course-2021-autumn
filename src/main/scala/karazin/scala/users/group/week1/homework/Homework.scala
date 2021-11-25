@@ -48,8 +48,8 @@ object Homework :
 
       if left then          // if left then
         if right then true  //    if right then right
-        else right          //    else right
-      else left            // else left
+        else false          //    else right
+      else false            // else left
 
     def or(left: Boolean, right: Boolean): Boolean = if left then true else right
 
