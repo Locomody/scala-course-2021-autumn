@@ -42,14 +42,7 @@ object Homework :
 
     def not(b: Boolean): Boolean = if b then false else true
 
-    def and(left: Boolean, right: Boolean): Boolean =
-                            // it's another variant to do this,
-                            // but I prefer more explicitness and readability
-
-      if left then          // if left then
-        if right then true  //    if right then right
-        else false          //    else right
-      else false            // else left
+    def and(left: Boolean, right: Boolean): Boolean = if left then right else false
 
     def or(left: Boolean, right: Boolean): Boolean = if left then true else right
 
