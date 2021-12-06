@@ -4,6 +4,18 @@ import scala.annotation.tailrec
 
 object Homework:
   
+  object Nat:
+    // Optional task
+    def fromInt(int: Int): Nat =
+      require(int >= 0, "Natural number cannot be less then zero")
+      @tailrec
+      def fromIntRec(int: Int, acc: Nat): Nat =
+        if int == 0
+        then acc
+        else fromIntRec(int - 1, acc.successor)
+
+      fromIntRec(int, Zero)
+  
   // Peano numbers
   abstract class Nat:
     def isZero: Boolean
@@ -16,17 +28,6 @@ object Homework:
     
     // Optional task
     def toInt: Int
-    
-    // Optional task
-    def fromInt(int: Int): Nat =
-      require(int >= 0, "Natural number cannot be less then zero")
-      @tailrec
-      def fromIntRec(int: Int, acc: Nat): Nat =
-        if int == 0
-          then acc
-        else fromIntRec(int - 1, acc.successor)
-
-      fromIntRec(int, Zero)
   
     override def toString: String = s"Nat($predecessor)"
   
@@ -51,8 +52,6 @@ object Homework:
     }
 
   class Succ(n: Nat) extends Nat:
-    def this(n: Int) = this(Zero.fromInt(n))
-
     def isZero: Boolean = false
     def predecessor: Nat = n
     
