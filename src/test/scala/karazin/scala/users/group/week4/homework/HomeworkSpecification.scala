@@ -1,9 +1,11 @@
 package karazin.scala.users.group.week4.homework
 
-import org.scalacheck._
+import org.scalacheck.*
 import Prop.{forAll, propBoolean}
-import arbitraries.given
-import Homework._
+import arbitraries.{empty, given}
+import Homework.*
+
+import scala.annotation.tailrec
 
 object HomeworkSpecification extends Properties("Homework"):
 
@@ -76,31 +78,59 @@ object NonEmptySpecification extends Properties("NonEmpty"):
   }
 
   property("include") = forAll { (nonEmpty: NonEmpty, element: Int) ⇒
-    false
+    (nonEmpty include element) != nonEmpty
   }
 
   property("contains") = forAll { (nonEmpty: NonEmpty, element: Int) ⇒
-    false
+    if nonEmpty contains element
+      then (nonEmpty include element) == NonEmpty
+    else (nonEmpty include element) != NonEmpty
   }
 
   property("remove") = forAll { (nonEmpty: NonEmpty, element: Int) ⇒
-    false
+    if nonEmpty contains element
+      then (nonEmpty remove element) != nonEmpty
+    else (nonEmpty remove element) == nonEmpty
   }
 
   property("union") = forAll { (nonEmpty: NonEmpty, set: IntSet) ⇒
-    false
+
+    @tailrec
+    def resRec(acc: IntSet, maybeNonEmpty: IntSet): IntSet =
+      if maybeNonEmpty.isInstanceOf[Empty]
+        then acc
+      // it's not look good 😅
+      else resRec(acc include maybeNonEmpty.asInstanceOf[NonEmpty].elem, maybeNonEmpty remove maybeNonEmpty.asInstanceOf[NonEmpty].elem)
+
+    (nonEmpty ∪ set) == resRec(set, nonEmpty)
   }
 
   property("intersection") = forAll { (nonEmpty: NonEmpty, set: IntSet) ⇒
-    false
+    @tailrec
+    def resRec(acc: IntSet, maybeNonEmpty: IntSet, set: IntSet): IntSet =
+      if maybeNonEmpty.isInstanceOf[Empty]
+        then acc
+      else if set contains maybeNonEmpty.asInstanceOf[NonEmpty].elem
+        then resRec(acc include maybeNonEmpty.asInstanceOf[NonEmpty].elem, maybeNonEmpty remove maybeNonEmpty.asInstanceOf[NonEmpty].elem, set)
+      else resRec(acc, maybeNonEmpty remove maybeNonEmpty.asInstanceOf[NonEmpty].elem, set)
+
+    nonEmpty ∩ set == resRec(Empty, nonEmpty, set)
   }
 
   property("complement") = forAll { (nonEmpty: NonEmpty, set: IntSet) ⇒
-    false
+    @tailrec
+    def resRec(acc: IntSet, maybeNonEmpty: IntSet, set: IntSet): IntSet =
+      if maybeNonEmpty.isInstanceOf[Empty]
+        then acc
+      else if set contains maybeNonEmpty.asInstanceOf[NonEmpty].elem
+        then resRec(acc, maybeNonEmpty remove maybeNonEmpty.asInstanceOf[NonEmpty].elem, set)
+      else resRec(acc include maybeNonEmpty.asInstanceOf[NonEmpty].elem, maybeNonEmpty remove maybeNonEmpty.asInstanceOf[NonEmpty].elem, set)
+
+    (nonEmpty ∖ set) == resRec(Empty, nonEmpty, nonEmpty ∩ set)
   }
 
   property("disjunctive") = forAll { (nonEmpty: NonEmpty, set: IntSet) ⇒
-    false
+    (nonEmpty ∆ set) == (nonEmpty ∪ set) ∖ (nonEmpty ∩ set)
   }
 
 end NonEmptySpecification
