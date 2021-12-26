@@ -35,7 +35,7 @@ object Homework:
 
     infix def contains(x: Int): Boolean = false
 
-    infix def remove(x: Int): IntSet = throw new Exception("Cannot remove element from empty set")
+    infix def remove(x: Int): IntSet = Empty
     
     @targetName("union")
     infix def ∪(that: IntSet): IntSet = that
